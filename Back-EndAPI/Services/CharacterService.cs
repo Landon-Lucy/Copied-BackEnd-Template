@@ -56,7 +56,7 @@ public class CharacterService
         // Create a SQL command
         using var cmd = conn.CreateCommand();
         cmd.CommandText = """
-            SELECT hero_id, name, class, level, health, mana
+            SELECT id, name, class, level, health, mana
             FROM character
         """;
 

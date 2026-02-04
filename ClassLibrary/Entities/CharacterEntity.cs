@@ -16,11 +16,11 @@ namespace ClassLibrary.Entities
     // Changing this class usually means changing the database.
     //
 
-    [Table("character")] // Maps this class to the "character" table
+    [Table("character")] // Maps this class to the "character" table. Could specify schema with something like [Table("character", Schema = "backend_rpg")]
     public class CharacterEntity
     {
         [Key] // Primary key
-        [Column("hero_id")]
+        [Column("id")]
         public Guid Id { get; set; }
 
         [Column("name")]

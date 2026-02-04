@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 //
 
 [ApiController] // Enables automatic model validation & API behavior
-[Route("api/characters")] // Base route for this controller
+[Route("api/character")] // Base route for this controller
 public class CharacterController : ControllerBase
 {
     // Service that contains the business/data logic
