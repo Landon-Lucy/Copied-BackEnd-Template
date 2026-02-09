@@ -1,4 +1,5 @@
 ﻿using ClassLibrary.DTOs;
+using ClassLibrary.Entities;
 using Microsoft.EntityFrameworkCore;
 
 //
@@ -42,6 +43,90 @@ public class CharacterService
             })
             .ToListAsync();
     }
+
+    public async Task<CharacterDTO> PostCharacterAsync(CharacterDTO newCharacter)
+    {
+
+        var entity = new CharacterEntity
+        {
+            Name = newCharacter.Name,
+            Class = newCharacter.Class,
+            Level = newCharacter.Level,
+            Health = newCharacter.Health,
+            Mana = newCharacter.Mana
+        };
+
+        _db.Characters.Add(entity);
+        await _db.SaveChangesAsync();
+
+
+        return new CharacterDTO
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Class = entity.Class,
+            Level = entity.Level,
+            Health = entity.Health,
+            Mana = entity.Mana
+        };
+    }
+
+    public async Task<CharacterDTO?> GetCharacterByIdAsync(Guid id)
+    {
+        var entity = await _db.Characters.FindAsync(id);
+        if (entity == null) return null;
+
+        return new CharacterDTO
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Class = entity.Class,
+            Level = entity.Level,
+            Health = entity.Health,
+            Mana = entity.Mana
+        };
+    }
+
+    public async Task<CharacterDTO> PutCharacterAsync(CharacterDTO character)
+    {
+        var entity = await _db.Characters.FindAsync(character.Id);
+
+        if (entity == null) return null;
+
+        entity.Name = character.Name;
+        entity.Class = character.Class;
+        entity.Level = character.Level;
+        entity.Health = character.Health;
+        entity.Mana = character.Mana;
+
+        await _db.SaveChangesAsync();
+
+        return new CharacterDTO
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            Class = entity.Class,
+            Level = entity.Level,
+            Health = entity.Health,
+            Mana = entity.Mana
+        };
+    }
+
+    public async Task<bool> DeleteCharacterAsync(Guid id)
+    {
+        var entity = await _db.Characters.FindAsync(id);
+        if (entity == null) return false;
+
+        _db.Characters.Remove(entity);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+
+
+
+
+
 
     // Example: SAME DATA, but using raw SQL instead of EF LINQ
     // This is for learning / reference purposes

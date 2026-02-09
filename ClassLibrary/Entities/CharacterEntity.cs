@@ -39,7 +39,7 @@ namespace ClassLibrary.Entities
         public int Mana { get; set; }
 
         // Exists in the database but NOT exposed to the client
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        //[Column("created_at")]
+        //public DateTime CreatedAt { get; set; }
     }
 }

@@ -39,4 +39,28 @@ public class CharacterController : ControllerBase
         // Return HTTP 200 OK with JSON data
         return Ok(characters);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<CharacterDTO>> PostCharacter(CharacterDTO newCharacter)
+    {
+        var createdCharacter = await _characterService.PostCharacterAsync(newCharacter);
+
+        return CreatedAtAction(nameof(GetCharacters), new { id = createdCharacter.Id }, createdCharacter);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<CharacterDTO>> PutCharacter(CharacterDTO updatedCharacter)
+    {
+        var character = await _characterService.PutCharacterAsync(updatedCharacter);
+
+        return Ok(character);
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteCharacter(Guid id)
+    {
+        await _characterService.DeleteCharacterAsync(id);
+
+        return NoContent();
+    }
 }
