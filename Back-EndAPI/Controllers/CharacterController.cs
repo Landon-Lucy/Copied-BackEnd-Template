@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/character")] // Base route for this controller
 public class CharacterController : ControllerBase
 {
-    // Service that contains the business/data logic
+    // Service that contains the business/data logic.
     private readonly CharacterService _characterService;
 
     // Constructor Injection:

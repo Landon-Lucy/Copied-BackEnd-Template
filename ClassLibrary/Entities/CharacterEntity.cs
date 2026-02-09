@@ -8,6 +8,7 @@ namespace ClassLibrary.Entities
     // ------------
     // Entities represent DATABASE TABLES.
     //
+    //
     // Entities:
     // - Match the database schema exactly
     // - Use attributes for column mapping
@@ -38,7 +39,7 @@ namespace ClassLibrary.Entities
         [Column("mana")]
         public int Mana { get; set; }
 
-        // Exists in the database but NOT exposed to the client
+        // Exists in the database but NOT exposed to the client.
         //[Column("created_at")]
         //public DateTime CreatedAt { get; set; }
     }

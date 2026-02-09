@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 // AppDbContext represents the DATABASE.
 // Each DbSet<T> represents a TABLE.
 //
+//
 // EF Core uses this class to:
 // - Generate SQL
 // - Track changes

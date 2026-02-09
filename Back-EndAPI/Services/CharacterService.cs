@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 // Services contain BUSINESS LOGIC and DATA ACCESS.
 // Controllers should never talk directly to the database.
 //
+//
 // Services:
 // - Decide WHAT data to fetch
 // - Decide HOW data is shaped
