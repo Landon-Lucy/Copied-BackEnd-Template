@@ -26,6 +26,7 @@ builder.Services.AddScoped<CharacterService>();
 
 builder.Services.AddScoped<FuntestService>();
 
+builder.Services.AddScoped<EmployeeService>();
 
 
 
