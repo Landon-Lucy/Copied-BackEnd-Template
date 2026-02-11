@@ -21,6 +21,8 @@ public class AppDbContext : DbContext
     // DbSet = a database table
     // This tells EF Core there is a "character" table
     public DbSet<CharacterEntity> Characters => Set<CharacterEntity>();
+    public DbSet<FuntestEntity> Funtest => Set<FuntestEntity>();
+
 
     // Constructor receives configuration options
     // (connection string, provider, logging, etc.)

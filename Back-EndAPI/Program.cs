@@ -24,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // REGISTER YOUR HERO SERVICE
 builder.Services.AddScoped<CharacterService>();
 
+builder.Services.AddScoped<FuntestService>();
 
 
 
