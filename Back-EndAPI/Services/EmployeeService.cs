@@ -28,139 +28,116 @@ public class EmployeeService
     }
 
     // Returns characters as DTOs (not entities)
-    public async Task<List<CharacterDTO>> GetCharactersAsync()
+    public async Task<List<EmployeeDTO>> GetEmployeesAsync()
     {
         // Query the database and PROJECT directly into DTOs
         // EF Core generates optimized SQL that selects only needed columns
-        return await _db.Characters
-            .Select(e => new CharacterDTO
+        return await _db.Employee
+            .Select(e => new EmployeeDTO
             {
                 Id = e.Id,
-                Name = e.Name,
-                Class = e.Class,
-                Level = e.Level,
-                Health = e.Health,
-                Mana = e.Mana
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                Email = e.Email,
+                Phone = e.Phone,
+                JobTitle = e.JobTitle,
+                Salary = e.Salary,
+                HireDate = e.HireDate,
+                IsActive = e.IsActive
             })
             .ToListAsync();
     }
 
-    public async Task<CharacterDTO> PostCharacterAsync(CharacterDTO newCharacter)
+        public async Task<EmployeeDTO> PostEmployeeAsync(EmployeeDTO newEmployee)
     {
 
-        var entity = new CharacterEntity
+        var entity = new EmployeeEntity
         {
-            Name = newCharacter.Name,
-            Class = newCharacter.Class,
-            Level = newCharacter.Level,
-            Health = newCharacter.Health,
-            Mana = newCharacter.Mana
+            FirstName = newEmployee.FirstName,
+            LastName = newEmployee.LastName,
+            Email = newEmployee.Email,
+            Phone = newEmployee.Phone,
+            JobTitle = newEmployee.JobTitle,
+            Salary = newEmployee.Salary,
+            HireDate = newEmployee.HireDate,
+            IsActive = newEmployee.IsActive
         };
 
-        _db.Characters.Add(entity);
+        _db.Employee.Add(entity);
         await _db.SaveChangesAsync();
 
 
-        return new CharacterDTO
+        return new EmployeeDTO
         {
             Id = entity.Id,
-            Name = entity.Name,
-            Class = entity.Class,
-            Level = entity.Level,
-            Health = entity.Health,
-            Mana = entity.Mana
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.Phone,
+            JobTitle = entity.JobTitle,
+            Salary = entity.Salary,
+            HireDate = entity.HireDate,
+            IsActive = entity.IsActive
         };
     }
 
-    public async Task<CharacterDTO?> GetCharacterByIdAsync(Guid id)
+    public async Task<EmployeeDTO?> GetEmployeeByIdAsync(Guid id)
     {
-        var entity = await _db.Characters.FindAsync(id);
+        var entity = await _db.Employee.FindAsync(id);
         if (entity == null) return null;
 
-        return new CharacterDTO
+        return new EmployeeDTO
         {
             Id = entity.Id,
-            Name = entity.Name,
-            Class = entity.Class,
-            Level = entity.Level,
-            Health = entity.Health,
-            Mana = entity.Mana
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.Phone,
+            JobTitle = entity.JobTitle,
+            Salary = entity.Salary,
+            HireDate = entity.HireDate,
+            IsActive = entity.IsActive
         };
     }
 
-    public async Task<CharacterDTO> PutCharacterAsync(CharacterDTO character)
+    public async Task<EmployeeDTO> PutEmployeeAsync(EmployeeDTO employee)
     {
-        var entity = await _db.Characters.FindAsync(character.Id);
+        var entity = await _db.Employee.FindAsync(employee.Id);
 
         if (entity == null) return null;
 
-        entity.Name = character.Name;
-        entity.Class = character.Class;
-        entity.Level = character.Level;
-        entity.Health = character.Health;
-        entity.Mana = character.Mana;
+        entity.FirstName = employee.FirstName;
+        entity.LastName = employee.LastName;
+        entity.Email = employee.Email;
+        entity.Phone = employee.Phone;
+        entity.JobTitle = employee.JobTitle;
+        entity.Salary = employee.Salary;
+        entity.HireDate = employee.HireDate;
+        entity.IsActive = employee.IsActive;
 
         await _db.SaveChangesAsync();
 
-        return new CharacterDTO
+        return new EmployeeDTO
         {
             Id = entity.Id,
-            Name = entity.Name,
-            Class = entity.Class,
-            Level = entity.Level,
-            Health = entity.Health,
-            Mana = entity.Mana
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Phone = entity.Phone,
+            JobTitle = entity.JobTitle,
+            Salary = entity.Salary,
+            HireDate = entity.HireDate,
+            IsActive = entity.IsActive
         };
     }
 
-    public async Task<bool> DeleteCharacterAsync(Guid id)
+    public async Task<bool> DeleteEmployeeAsync(Guid id)
     {
-        var entity = await _db.Characters.FindAsync(id);
+        var entity = await _db.Employee.FindAsync(id);
         if (entity == null) return false;
 
-        _db.Characters.Remove(entity);
+        _db.Employee.Remove(entity);
         await _db.SaveChangesAsync();
         return true;
-    }
-
-
-
-
-
-
-
-    // Example: SAME DATA, but using raw SQL instead of EF LINQ
-    // This is for learning / reference purposes
-    public async Task<List<CharacterDTO>> GetCharactersWithSqlAsync()
-    {
-        var results = new List<CharacterDTO>();
-
-        // Get the raw database connection EF is using
-        using var conn = _db.Database.GetDbConnection();
-        await conn.OpenAsync();
-
-        // Create a SQL command
-        using var cmd = conn.CreateCommand();
-        cmd.CommandText = """
-            SELECT id, name, class, level, health, mana
-            FROM character
-        """;
-
-        // Execute query and read results
-        using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
-        {
-            results.Add(new CharacterDTO
-            {
-                Id = reader.GetGuid(0),
-                Name = reader.GetString(1),
-                Class = reader.GetString(2),
-                Level = reader.GetInt32(3),
-                Health = reader.GetInt32(4),
-                Mana = reader.GetInt32(5)
-            });
-        }
-
-        return results;
     }
 }

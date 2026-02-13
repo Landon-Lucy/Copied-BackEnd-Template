@@ -34,7 +34,7 @@ namespace ClassLibrary.Entities
         public string Email { get; set; } = string.Empty;
 
         [Column("phone")]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [Column("job_title")]
         public string JobTitle { get; set; }
