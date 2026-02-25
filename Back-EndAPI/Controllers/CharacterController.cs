@@ -1,5 +1,6 @@
 ﻿using ClassLibrary.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 //
 // CONTROLLER ROLE
@@ -40,17 +41,55 @@ public class CharacterController : ControllerBase
         return Ok(characters);
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CharacterDTO>> GetCharacterById(Guid id)
+    {
+        var character = await _characterService.GetCharacterByIdAsync(id);
+        if (character == null)
+            return NotFound();
+        return Ok(character);
+    }
+
     [HttpPost]
     public async Task<ActionResult<CharacterDTO>> PostCharacter(CharacterDTO newCharacter)
     {
+        if(!ModelState.IsValid)
+        {
+            return BadRequest(Error("Invalid Data"));
+        }
+
+        if(newCharacter.Id != Guid.Empty)
+        {
+            return BadRequest(Error("Id cannot be set"));
+        }
+
+        try
+        {
         var createdCharacter = await _characterService.PostCharacterAsync(newCharacter);
 
         return CreatedAtAction(nameof(GetCharacters), new { id = createdCharacter.Id }, createdCharacter);
+        }
+        catch (ValidationException ex) 
+        {
+            return BadRequest(Error(ex.Message));
+        }
+
+
     }
 
     [HttpPut]
     public async Task<ActionResult<CharacterDTO>> PutCharacter(CharacterDTO updatedCharacter)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(Error("Invalid Data"));
+        }
+
+        if (updatedCharacter.Id != Guid.Empty)
+        {
+            return BadRequest(Error("Id cannot be set"));
+        }
+
         var character = await _characterService.PutCharacterAsync(updatedCharacter);
 
         return Ok(character);
@@ -62,5 +101,15 @@ public class CharacterController : ControllerBase
         await _characterService.DeleteCharacterAsync(id);
 
         return NoContent();
+    }
+
+// An Object Error with a message and a timestamp
+    private object Error(string message)
+    {
+        return new
+        {
+            Message = message,
+            Timestamp = DateTime.UtcNow
+        };
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ClassLibrary.DTOs;
 using ClassLibrary.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 //
 // SERVICE ROLE
@@ -47,6 +48,35 @@ public class CharacterService
 
     public async Task<CharacterDTO> PostCharacterAsync(CharacterDTO newCharacter)
     {
+        //Normalize
+        newCharacter.Name = newCharacter.Name.Trim();
+        newCharacter.Class = newCharacter.Class.Trim();
+        //Capitalize first letter of each word
+        newCharacter.Name = Regex.Replace(newCharacter.Name, @"\b\w", m => m.Value.ToUpper());
+        //Capitalize only first letter of class
+        newCharacter.Class = char.ToUpper(newCharacter.Class[0]) + newCharacter.Class.Substring(1).ToLower();
+
+        // Validate - structure
+        if (!Regex.IsMatch(newCharacter.Name, @"^[a-zA-Z0-9\s]+$"))
+            throw new ArgumentException("Name must only contain letters, numbers, and spaces.");
+
+        var validClasses = new[] { "Warrior", "Mage", "Rogue", "Cleric" };
+        if (!validClasses.Contains(newCharacter.Class))
+            throw new ArgumentException($"{newCharacter.Class} is not a valid class");
+
+        //Business rules
+
+        var exists = await _db.Characters.AnyAsync(c => c.Name.ToLower() == newCharacter.Name.ToLower());
+
+        if (exists)
+        {
+            throw new ArgumentException($"A character with the name '{newCharacter.Name}' already exists.");
+        }
+
+        if(newCharacter.Class == "Rogue" && newCharacter.Level > 40)
+        {
+            throw new ArgumentException("Rogues cannot be above level 40.");
+        }
 
         var entity = new CharacterEntity
         {
@@ -90,6 +120,8 @@ public class CharacterService
 
     public async Task<CharacterDTO> PutCharacterAsync(CharacterDTO character)
     {
+
+
         var entity = await _db.Characters.FindAsync(character.Id);
 
         if (entity == null) return null;
