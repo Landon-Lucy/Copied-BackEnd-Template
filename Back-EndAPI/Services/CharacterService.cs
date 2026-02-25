@@ -60,7 +60,7 @@ public class CharacterService
         if (!Regex.IsMatch(newCharacter.Name, @"^[a-zA-Z0-9\s]+$"))
             throw new ArgumentException("Name must only contain letters, numbers, and spaces.");
 
-        var validClasses = new[] { "Warrior", "Mage", "Rogue", "Cleric" };
+        var validClasses = new[] { "Warrior", "Mage", "Rogue", "Archer" };
         if (!validClasses.Contains(newCharacter.Class))
             throw new ArgumentException($"{newCharacter.Class} is not a valid class");
 
@@ -76,6 +76,15 @@ public class CharacterService
         if(newCharacter.Class == "Rogue" && newCharacter.Level > 40)
         {
             throw new ArgumentException("Rogues cannot be above level 40.");
+        }
+
+        if(newCharacter.Level < 1 || newCharacter.Level > 50 ) {
+            throw new ArgumentException("Level must be between 1 and 50.");
+        }
+
+        //Using health as a substitute for gold on the assignment
+        if(newCharacter.Health < 0 || newCharacter.Health > 10000) {
+            throw new ArgumentException("Health must be between 0 and 10000.");
         }
 
         var entity = new CharacterEntity
@@ -120,7 +129,46 @@ public class CharacterService
 
     public async Task<CharacterDTO> PutCharacterAsync(CharacterDTO character)
     {
+        //Normalize
+        character.Name = character.Name.Trim();
+        character.Class = character.Class.Trim();
+        //Capitalize first letter of each word
+        character.Name = Regex.Replace(character.Name, @"\b\w", m => m.Value.ToUpper());
+        //Capitalize only first letter of class
+        character.Class = char.ToUpper(character.Class[0]) + character.Class.Substring(1).ToLower();
 
+        // Validate - structure
+        if (!Regex.IsMatch(character.Name, @"^[a-zA-Z0-9\s]+$"))
+            throw new ArgumentException("Name must only contain letters, numbers, and spaces.");
+
+        var validClasses = new[] { "Warrior", "Mage", "Rogue", "Archer" };
+        if (!validClasses.Contains(character.Class))
+            throw new ArgumentException($"{character.Class} is not a valid class");
+
+        //Business rules
+
+        var exists = await _db.Characters.AnyAsync(c => c.Name.ToLower() == character.Name.ToLower());
+
+        if (exists)
+        {
+            throw new ArgumentException($"A character with the name '{character.Name}' already exists.");
+        }
+
+        if (character.Class == "Rogue" && character.Level > 40)
+        {
+            throw new ArgumentException("Rogues cannot be above level 40.");
+        }
+
+        if (character.Level < 1 || character.Level > 50)
+        {
+            throw new ArgumentException("Level must be between 1 and 50.");
+        }
+
+        //Using health as a substitute for gold on the assignment
+        if (character.Health < 0 || character.Health > 10000)
+        {
+            throw new ArgumentException("Health must be between 0 and 10000.");
+        }
 
         var entity = await _db.Characters.FindAsync(character.Id);
 

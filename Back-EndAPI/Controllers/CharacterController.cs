@@ -85,10 +85,6 @@ public class CharacterController : ControllerBase
             return BadRequest(Error("Invalid Data"));
         }
 
-        if (updatedCharacter.Id != Guid.Empty)
-        {
-            return BadRequest(Error("Id cannot be set"));
-        }
 
         var character = await _characterService.PutCharacterAsync(updatedCharacter);
 
