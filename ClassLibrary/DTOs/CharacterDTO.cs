@@ -29,7 +29,7 @@ namespace ClassLibrary.DTOs
         [Range(1,50)]
         public int Level { get; set; }
 
-        [Range(1,int.MaxValue)]
+        [Range(1,10000)]
         public int Health { get; set; }
 
         [Range(1,int.MaxValue)]
