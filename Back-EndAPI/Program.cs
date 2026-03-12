@@ -1,3 +1,4 @@
+using Back_EndAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,20 +16,19 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-// REGISTER EF CORE
+// REGISTER EF CORE (use SecondConnection instead of DefaultConnection)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("SecondConnection"))
+);
 
-// REGISTER YOUR HERO SERVICE
-builder.Services.AddScoped<CharacterService>();
+// Register only existing application services (add others only if those classes exist)
+builder.Services.AddScoped<EmployeeRoleService>();
 
-builder.Services.AddScoped<FuntestService>();
-
-builder.Services.AddScoped<EmployeeService>();
-
-
+// If these service classes exist in your project, register them. Otherwise remove or add the missing classes:
+// builder.Services.AddScoped<CharacterService>();
+// builder.Services.AddScoped<FuntestService>();
+// builder.Services.AddScoped<EmployeeService>();
+// builder.Services.AddScoped<AlbumService>();
 
 var app = builder.Build();
 
@@ -36,10 +36,17 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    var connString = config.GetConnectionString("DefaultConnection");
-    using var conn = new Npgsql.NpgsqlConnection(connString);
-    conn.Open();
-    Console.WriteLine("Connected to Postgres!");
+    var connString = config.GetConnectionString("SecondConnection");
+    try
+    {
+        using var conn = new Npgsql.NpgsqlConnection(connString);
+        conn.Open();
+        Console.WriteLine("Connected to Postgres (SecondConnection)!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to open DefaultConnection: {ex.Message}");
+    }
 }
 
 app.UseCors();
